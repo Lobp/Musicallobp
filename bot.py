@@ -4,8 +4,8 @@ import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from telegram import Update
 from telegram.ext import Updater, MessageHandler, Filters, CallbackContext
-from spotdl import Spotdl
 import yt_dlp as youtube_dl
+from spotdl import Spotdl
 
 # Simple HTTP server to keep Render happy
 class SimpleHandler(BaseHTTPRequestHandler):
@@ -24,20 +24,26 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Привет! Я ваш музыкальный бот. Отправьте ссылку на музыку или плейлист, и я конвертирую её в MP3.')
 
 def download_audio(url):
-    # Use yt-dlp for YouTube links
-    ydl_opts = {
-        'format': 'bestaudio/best',
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-        'outtmpl': '/tmp/%(title)s.%(ext)s',
-    }
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        info_dict = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info_dict).replace(".webm", ".mp3").replace(".m4a", ".mp3")
-        return filename
+    # Check if the URL is a Spotify link
+    if "spotify.com" in url:
+        spotdl = Spotdl()
+        song = spotdl.download([url])
+        return song[0] if song else None
+    else:
+        # Use yt-dlp for other supported links (YouTube, etc.)
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+            'outtmpl': '/tmp/%(title)s.%(ext)s',
+        }
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=True)
+            filename = ydl.prepare_filename(info_dict).replace(".webm", ".mp3").replace(".m4a", ".mp3")
+            return filename
 
 def handle_message(update: Update, context: CallbackContext) -> None:
     message_text = update.message.text
@@ -51,9 +57,12 @@ def handle_message(update: Update, context: CallbackContext) -> None:
         update.message.reply_text('Скачиваю и конвертирую музыку...')
         try:
             filename = download_audio(url)
-            with open(filename, 'rb') as audio_file:
-                update.message.reply_audio(audio=audio_file)
-            os.remove(filename)  # Удалить файл после отправки
+            if filename:
+                with open(filename, 'rb') as audio_file:
+                    update.message.reply_audio(audio=audio_file)
+                os.remove(filename)  # Удалить файл после отправки
+            else:
+                update.message.reply_text('Не удалось скачать музыку. Пожалуйста, проверьте ссылку.')
         except Exception as e:
             update.message.reply_text(f'Произошла ошибка: {e}')
     else:
