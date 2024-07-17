@@ -4,6 +4,7 @@ import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from telegram import Update
 from telegram.ext import Updater, MessageHandler, Filters, CallbackContext
+from spotdl import Spotdl
 import yt_dlp as youtube_dl
 
 # Simple HTTP server to keep Render happy
@@ -23,6 +24,7 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Привет! Я ваш музыкальный бот. Отправьте ссылку на музыку или плейлист, и я конвертирую её в MP3.')
 
 def download_audio(url):
+    # Use yt-dlp for YouTube links
     ydl_opts = {
         'format': 'bestaudio/best',
         'postprocessors': [{
