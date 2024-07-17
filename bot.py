@@ -24,13 +24,14 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Привет! Я ваш музыкальный бот. Отправьте ссылку на музыку или плейлист, и я конвертирую её в MP3.')
 
 def download_audio(url):
-    # Check if the URL is a Spotify link
+    spotify_client_id = os.getenv('SPOTIFY_CLIENT_ID')
+    spotify_client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
+
     if "spotify.com" in url:
-        spotdl = Spotdl()
+        spotdl = Spotdl(client_id=spotify_client_id, client_secret=spotify_client_secret)
         song = spotdl.download([url])
         return song[0] if song else None
     else:
-        # Use yt-dlp for other supported links (YouTube, etc.)
         ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
