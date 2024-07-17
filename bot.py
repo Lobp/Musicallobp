@@ -83,4 +83,4 @@ def main() -> None:
     updater.idle()
 
 if __name__ == '__main__':
-    main()
+    print("пизда всему живому")
