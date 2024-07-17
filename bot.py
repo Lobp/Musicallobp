@@ -27,7 +27,7 @@ def convert_music(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Музыка готова!')
 
 def main() -> None:
-    updater = Updater(os.getenv("TELEGRAM_TOKEN"))
+    updater = Updater(os.getenv(TELEGRAM_TOKEN))
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("convert", convert_music))
