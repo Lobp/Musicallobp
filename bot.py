@@ -1,7 +1,7 @@
 import os
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
-import youtube_dlp as youtube_dl
+import yt_dlp as youtube_dl
 
 def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Привет! Я ваш музыкальный бот. Используйте команду /convert <ссылка> для конвертации музыки.')
@@ -30,9 +30,9 @@ def convert_music(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Скачиваю и конвертирую музыку...')
     try:
         filename = download_youtube_audio(url)
-        update.message.reply_text(f'Музыка готова! Файл: {filename}')
         with open(filename, 'rb') as audio_file:
             update.message.reply_audio(audio=audio_file)
+        os.remove(filename)  # Удалить файл после отправки
     except Exception as e:
         update.message.reply_text(f'Произошла ошибка: {e}')
 
