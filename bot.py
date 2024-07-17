@@ -2,7 +2,6 @@ import os
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
 import youtube_dl
-faas = "saaf"
 
 def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Привет! Я ваш музыкальный бот.')
