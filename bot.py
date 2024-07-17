@@ -19,17 +19,18 @@ def run_http_server():
     server = HTTPServer(('0.0.0.0', port), SimpleHandler)
     server.serve_forever()
 
+# Initialize Spotify client globally
+spotify_client_id = os.getenv('SPOTIFY_CLIENT_ID')
+spotify_client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
+spotify_client = Spotdl(client_id=spotify_client_id, client_secret=spotify_client_secret)
+
 # Telegram bot functionality
 def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Привет! Я ваш музыкальный бот. Отправьте ссылку на музыку или плейлист, и я конвертирую её в MP3.')
 
 def download_audio(url):
-    spotify_client_id = os.getenv('SPOTIFY_CLIENT_ID')
-    spotify_client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
-
     if "spotify.com" in url:
-        spotdl = Spotdl(client_id=spotify_client_id, client_secret=spotify_client_secret)
-        song = spotdl.download([url])
+        song = spotify_client.download([url])
         return song[0] if song else None
     else:
         ydl_opts = {
