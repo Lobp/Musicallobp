@@ -1,7 +1,7 @@
 import os
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
-import yt_dlp as youtube_dl
+import youtube_dlp as youtube_dl
 
 def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Привет! Я ваш музыкальный бот. Используйте команду /convert <ссылка> для конвертации музыки.')
