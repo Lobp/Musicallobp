@@ -2,7 +2,6 @@ import os
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext
 import youtube_dl
-TELEGRAM_TOKEN = "7092718962:AAEW969TSqCGUXlSn3bGNKSaFw37tfir7R8"
 
 def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Привет! Я ваш музыкальный бот.')
@@ -27,7 +26,7 @@ def convert_music(update: Update, context: CallbackContext) -> None:
     update.message.reply_text('Музыка готова!')
 
 def main() -> None:
-    updater = Updater(os.getenv(TELEGRAM_TOKEN))
+    updater = Updater(os.getenv("7092718962:AAEW969TSqCGUXlSn3bGNKSaFw37tfir7R8"))
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("convert", convert_music))
